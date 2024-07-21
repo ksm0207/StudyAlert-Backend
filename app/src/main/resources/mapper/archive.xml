@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- Mapper -->
+<mapper  namespace="com.example.dao.ArchiveDataAccessObject">
+
+    <insert id="onSave">
+        INSERT INTO user_acv
+        (
+            name,
+            start_date,
+            first_time,
+            end_time,
+            end_date,
+            reserve_point
+        )
+        VALUES
+        (
+            '우주퀸남연서',
+            SYSDATE(), -- start date
+            #{first_time}, -- first_time
+            #{end_time}, -- end_time
+            SYSDATE(), -- end date
+            10000
+        );
+    </insert>
+
+
+</mapper>
