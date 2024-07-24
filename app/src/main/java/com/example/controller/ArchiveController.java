@@ -5,6 +5,7 @@ import com.example.dto.ArchiveResponseDTO;
 import com.example.dto.HistoryDTO;
 import com.example.entity.TimeHistory;
 import com.example.service.ArchiveService;
+import com.example.util.EarnedPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +25,34 @@ public class ArchiveController {
     
     @Autowired
     private ArchiveService archive;
+    @Autowired
+    private EarnedPoint earnedPoint;
+    private final Logger logger = Logger.getLogger(ArchiveController.class.getName());
 
     @PostMapping("/hello")
-    public ResponseEntity<ArchiveResponseDTO > save(@RequestBody ArchiveDTO a){
-        int status = archive.serviceOnSave(a.getFirst_time(),a.getEnd_time());
+    public ResponseEntity<ArchiveResponseDTO > save(@RequestBody ArchiveDTO archiveTime){
         ArchiveResponseDTO response = new ArchiveResponseDTO();
 
-        if(status > 0) {
-            System.out.println("DB 저장됨");
-            response.setReserve_point(10000);
-        }else {
-            System.out.println("DB 저장망함");
-            response.setReserve_point(0);
+        try {
+            long point = this.earnedPoint.minCalReturnPoint(archiveTime.getFirst_time(),archiveTime.getEnd_time());
+
+            if (point > 0) logger.info("시간계산완료 : " + point);
+
+            int status = archive.serviceOnSave(archiveTime.getFirst_time(),archiveTime.getEnd_time(),point);
+            switch (status) {
+                case 1 -> {
+                    logger.info("DB 저장 값 : " + status);
+                    response.setReserve_point(point);
+                    response.setMessage("Success");
+                }
+                case 0 -> {
+                    logger.info("DB 실패 값 : " + status);
+                    response.setReserve_point(point);
+                    response.setMessage("Fail");
+                }
+            }
+        }catch (Exception error) {
+            response.setMessage(error.toString());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

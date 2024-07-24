@@ -23,8 +23,8 @@ public class ArchiveService {
     @Autowired
     private ArchiveDataAccessObject dao;
 
-    public int serviceOnSave(String first_time , String end_time) {
-        return dao.onSave(first_time,end_time);
+    public int serviceOnSave(String first_time , String end_time,long point) {
+        return dao.onSave(first_time,end_time,point);
     }
 
     public Map<String,Object> saveTimeHistory(Long memberId, LocalDateTime startDate, LocalDateTime endTime) {

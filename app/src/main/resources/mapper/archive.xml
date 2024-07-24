@@ -22,7 +22,7 @@
             #{first_time}, -- first_time
             #{end_time}, -- end_time
             SYSDATE(), -- end date
-            10000
+            #{point}
         );
     </insert>
 
